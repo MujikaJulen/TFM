@@ -1,18 +1,11 @@
+# Librerías
 import pandas as pd
 import numpy as np
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 
-colFrame = 0
-colView = 1
-colHipL = 2
-colHipR = 3
-colKneeL = 4
-colKneeR = 5
-colAnkleL = 6
-colAnkleR = 7
-colCGx = 14
-colCGy = 15
+# Archivos de datos
+import columnas
 
 # Dirección en la que se almacenan los datos procesados en formato CSV
 direccion_csv = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
@@ -25,7 +18,7 @@ df.columns = df.columns.str.strip() # Eliminar espacios en los nombres de column
 print("Columnas detectadas:", df.columns.tolist())
 
 # Extraer la serie de ángulos, seleccionando los datos por índice
-angles = df.iloc[:, colAnkleR]
+angles = df.iloc[:, columnas.AnkleL]  # Ángulo de la rodilla izquierda
 
 # Detectar mínimos en la serie de ángulos
 minimos, _ = find_peaks(-angles, height=-150, distance=10)
@@ -50,3 +43,5 @@ plt.title("Detección de ciclos en la marcha")
 plt.xlabel("Frame")
 plt.ylabel("Ángulo de rodilla izquierda")
 plt.show()
+
+
