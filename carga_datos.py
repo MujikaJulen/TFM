@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 # Archivos de datos
 import columnas
 
+index = columnas.KneeR["idx"]  # Índice de la columna con la que se trabaja
+mensaje = columnas.KneeR["msg"] # Eje Y en el gráfico 
+
 # Dirección en la que se almacenan los datos procesados en formato CSV
 direccion_csv = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
 
@@ -18,7 +21,7 @@ df.columns = df.columns.str.strip() # Eliminar espacios en los nombres de column
 print("Columnas detectadas:", df.columns.tolist())
 
 # Extraer la serie de ángulos, seleccionando los datos por índice
-angles = df.iloc[:, columnas.AnkleL]  # Ángulo de la rodilla izquierda
+angles = df.iloc[:, index]  # Ángulo de la rodilla izquierda
 
 # Detectar mínimos en la serie de ángulos
 minimos, _ = find_peaks(-angles, height=-150, distance=10)
@@ -41,7 +44,7 @@ plt.plot(angles)
 plt.plot(minimos_filtrados, angles[minimos_filtrados], "rx")
 plt.title("Detección de ciclos en la marcha")
 plt.xlabel("Frame")
-plt.ylabel("Ángulo de rodilla izquierda")
+plt.ylabel(mensaje)
 plt.show()
 
 
