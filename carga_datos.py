@@ -7,66 +7,46 @@ import matplotlib.pyplot as plt
 # Archivos de datos
 import columnas
 
-#########################
-### PARTICULARIZACIÓN ###
-#########################
-
-# *? Se podría configurar para que solo haya que cambiar una vez la articulación
-
-index = columnas.AnkleL["idx"]  # Índice de la columna con la que se trabaja
-mensaje = columnas.AnkleL["msg"] # Eje Y en el gráfico 
-archive_name = "resultados_01_01_02.csv"  # Nombre del archivo CSV a cargar
-
-
-#########################
-#### CARGA DE DATOS #####
-#########################
-
-# Dirección en la que se almacenan los datos procesados en formato CSV
+# Ruta del archivo CSV
 path_csv = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
 
-# Cargar el CSV con separador y formato decimal UTF-8
-df = pd.read_csv(path_csv + archive_name, sep = ";", decimal = ",")
-df.columns = df.columns.str.strip() # Eliminar espacios en los nombres de columnas
 
-# ** Si se quieren comprobar las columnas del archivo CSV
+########################
+###### FUNCIONES #######
+########################
 
-# print("Columnas detectadas:", df.columns.tolist())
+def data_csv(file_path, file_name):
+    df = pd.read_csv(file_path + file_name, sep = ";", decimal = ",")
+    df.columns = df.columns.str.strip() # Eliminar espacios en los nombres de columnas
+    return df
 
-###########################
-### EXTRACCIÓN DE DATOS ###
-###########################
-
-# Extraer la serie de ángulos, seleccionando los datos por índice
-angles = df.iloc[:, index]  # Ángulo de la rodilla izquierda
-
-# Detectar mínimos en la serie de ángulos
-minimums, peak_values = find_peaks(-angles, height=-150, distance=10)
-
-# minimos: devuelve los frames en los que se observan los mínimos
-# peak_values : valores de los mínimos detectados
-
-
-# Eliminar datos inválidos alejados de la media del resto de mínimos. Se consideran valores anómalos.
-minimum_values = angles.iloc[minimums] # Devuelve los frames en los que se dan los valores mínimos
-filtered_minimum = minimums[(minimum_values > (np.mean(minimum_values) - 10)) & 
+def minimum_extraction(angles, height, distance):
+    minimums, peak_values = find_peaks(-angles, -height, -distance)
+    minimum_values = angles.iloc[minimums]
+    filtered_minimum = minimums[(minimum_values > (np.mean(minimum_values) - 10)) & 
                             (minimum_values < (np.mean(minimum_values) + 10))]
+    return filtered_minimum
 
-# Mostrar resultados
-print("Frames con mínimos detectados:", filtered_minimum)
+def visualization(angles, filtered_minimum, title):
+    plt.plot(angles) 
+    plt.plot(filtered_minimum, angles[filtered_minimum], "rx")
+    plt.title(title)
+    plt.xlabel("Frame")
+    plt.ylabel("Grados")
+    plt.show()
 
-# Segmentación de las repeticiones de la marcha
 
-
-###########################
-### VISUALIZACIÓN DATOS ###
-###########################
-
-plt.plot(angles) 
-plt.plot(filtered_minimum, angles[filtered_minimum], "rx")
-plt.title("Detección de ciclos en la marcha")
-plt.xlabel("Frame")
-plt.ylabel(mensaje)
-plt.show()
+if __name__ == "__main__":
+    
+    file_name = "resultados_01_01_02.csv"
+    file_path = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
+    
+    idx = columnas.AnkleL["idx"]  # Índice de la columna con la que se trabaja
+    msg = columnas.AnkleL["msg"] # Eje Y en el gráfico 
+    
+    df = data_csv(file_path, file_name)
+    angles = df.iloc[:,idx]
+    filtered_minimum = minimum_extraction(angles, height = 70, distance = 20)
+    visualization(angles, filtered_minimum, msg)
 
 
