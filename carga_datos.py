@@ -34,7 +34,15 @@ def visualization(angles, filtered_minimum, title):
     plt.xlabel("Frame")
     plt.ylabel("Grados")
     plt.show()
-
+    
+def gait_iteration(filtered_minimum, angles):
+    print(f"Frames en los que se ha detectado un mínimo: {filtered_minimum}")
+    for i in range(len(filtered_minimum)-1):
+        init_frame = filtered_minimum[i]
+        end_frame = filtered_minimum[i+1]
+        gait_cycle = angles.loc[init_frame:end_frame]
+        print(f"Ciclo de la marcha {i+1}. Comienzo: {init_frame}, Fin: {end_frame}")
+        plt.plot(gait_cycle)
 
 if __name__ == "__main__":
     
@@ -48,5 +56,7 @@ if __name__ == "__main__":
     angles = df.iloc[:,idx]
     filtered_minimum = minimum_extraction(angles, height = 70, distance = 20)
     visualization(angles, filtered_minimum, msg)
+    
+    gait_iteration(filtered_minimum, angles)
 
 
