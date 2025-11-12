@@ -11,9 +11,12 @@ import columnas
 ### PARTICULARIZACIÓN ###
 #########################
 
-index = columnas.KneeR["idx"]  # Índice de la columna con la que se trabaja
-mensaje = columnas.KneeR["msg"] # Eje Y en el gráfico 
-archive_name = "resultados_Joseba_cerca.csv"  # Nombre del archivo CSV a cargar
+# *? Se podría configurar para que solo haya que cambiar una vez la articulación
+
+index = columnas.AnkleL["idx"]  # Índice de la columna con la que se trabaja
+mensaje = columnas.AnkleL["msg"] # Eje Y en el gráfico 
+archive_name = "resultados_01_01_02.csv"  # Nombre del archivo CSV a cargar
+
 
 #########################
 #### CARGA DE DATOS #####
@@ -26,7 +29,8 @@ path_csv = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
 df = pd.read_csv(path_csv + archive_name, sep = ";", decimal = ",")
 df.columns = df.columns.str.strip() # Eliminar espacios en los nombres de columnas
 
-# Verifica columnas
+# ** Si se quieren comprobar las columnas del archivo CSV
+
 # print("Columnas detectadas:", df.columns.tolist())
 
 ###########################
@@ -39,20 +43,26 @@ angles = df.iloc[:, index]  # Ángulo de la rodilla izquierda
 # Detectar mínimos en la serie de ángulos
 minimums, peak_values = find_peaks(-angles, height=-150, distance=10)
 
-# minimos: devuelve na lista de índices donde se detectan los mínimos
-# peak_values : diccionario con el valor de cada pico detectado
+# minimos: devuelve los frames en los que se observan los mínimos
+# peak_values : valores de los mínimos detectados
 
 
-# Eliminar datos inválidos
-minimum_values = angles.iloc[minimums]
+# Eliminar datos inválidos alejados de la media del resto de mínimos. Se consideran valores anómalos.
+minimum_values = angles.iloc[minimums] # Devuelve los frames en los que se dan los valores mínimos
 filtered_minimum = minimums[(minimum_values > (np.mean(minimum_values) - 10)) & 
                             (minimum_values < (np.mean(minimum_values) + 10))]
 
 # Mostrar resultados
 print("Frames con mínimos detectados:", filtered_minimum)
 
-# Visualizar
-plt.plot(angles)
+# Segmentación de las repeticiones de la marcha
+
+
+###########################
+### VISUALIZACIÓN DATOS ###
+###########################
+
+plt.plot(angles) 
 plt.plot(filtered_minimum, angles[filtered_minimum], "rx")
 plt.title("Detección de ciclos en la marcha")
 plt.xlabel("Frame")
