@@ -45,9 +45,18 @@ def gait_iteration(filtered_minimum, angles):
         gait_cycle = angles.loc[init_frame:end_frame]
         print(f"Ciclo de la marcha {i+1}. Comienzo: {init_frame}, Fin: {end_frame}")
         visualization(gait_cycle, [], f"Ciclo de la marcha {i+1}")
+        
+        
+        
+
+###################
+###### MAIN #######
+###################
+
+
 if __name__ == "__main__":
     
-    file_name = "resultados_01_01_02.csv"
+    file_name = "resultados_01_01_01.csv"
     file_path = "/home/mujikajulen/Documentos/TFM/DatosProcesados/"
     
     idx = columnas.AnkleR["idx"]  # Índice de la columna con la que se trabaja
